@@ -4,34 +4,44 @@ import kotlinx.cinterop.*
 import platform.posix.*
 
 fun main() {
-    println(part1())
-    println(part2())
+    val lists = read()
+    val firstList = lists.first.sorted()
+    val secondList = lists.second.sorted()
+    var acc = 0
+    for (i in firstList.indices) {
+        acc += abs(firstList[i] - secondList[i])
+    }
+    println(acc)
 }
 
-fun part1(): Any {
+fun read(): Pair<List<Int>, List<Int>> {
     return input
 }
 
-fun part2(): Any {
-    return input.reversed()
-}
+private val input: Pair<List<Int>, List<Int>> by lazy { readInput() }
 
-private val input: String by lazy { readInput()}
-
-private fun readInput(): String {
-    val returnBuffer = StringBuilder()
+@OptIn(ExperimentalForeignApi::class)
+private fun readInput(): Pair<List<Int>, List<Int>> {
     val cwd = getcwd(null, 0U)?.toKString()
     val resourceDir = "${cwd}/src/commonMain/resources"
     val file = fopen("$resourceDir/Day1.input", "r") ?:
     throw IllegalArgumentException("Cannot open input file Day1.input")
+
+    val firstList = ArrayList<Int>()
+    val secondList = ArrayList<Int>()
 
     try {
         memScoped {
             val readBufferLength = 64 * 1024
             val buffer = allocArray<ByteVar>(readBufferLength)
             var line = fgets(buffer, readBufferLength, file)?.toKString()
+            var values: List<String>
+            val delimiter = "   "
             while (line != null) {
-                returnBuffer.append(line)
+                values = line?.split(delimiter, limit = 2)!!
+                firstList.add(values.first().toInt())
+                secondList.add(values.last().trim().toInt())
+
                 line = fgets(buffer, readBufferLength, file)?.toKString()
             }
         }
@@ -39,5 +49,5 @@ private fun readInput(): String {
         fclose(file)
     }
 
-    return returnBuffer.toString()
+    return Pair(firstList, secondList)
 }

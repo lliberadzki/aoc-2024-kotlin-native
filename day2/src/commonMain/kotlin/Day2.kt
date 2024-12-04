@@ -18,6 +18,7 @@ fun part2(): Any {
 
 private val input: String by lazy { readInput()}
 
+@OptIn(ExperimentalForeignApi::class)
 private fun readInput(): String {
     val returnBuffer = StringBuilder()
     val cwd = getcwd(null, 0U)?.toKString()
