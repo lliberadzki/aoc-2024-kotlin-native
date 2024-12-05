@@ -12,6 +12,24 @@ fun main() {
         acc += abs(firstList[i] - secondList[i])
     }
     println(acc)
+
+    var rightInd = 0
+    var count = 0
+    var acc2 = 0
+    val secondListSize = secondList.size
+    for (i in firstList.indices) {
+        while (rightInd < secondListSize && firstList[i] > secondList[rightInd]) {
+            rightInd++
+        }
+        while (rightInd < secondListSize && firstList[i] == secondList[rightInd]) {
+            rightInd++
+            count++
+        }
+
+        acc2 += firstList[i] * count
+        count = 0
+    }
+    println(acc2)
 }
 
 fun read(): Pair<List<Int>, List<Int>> {

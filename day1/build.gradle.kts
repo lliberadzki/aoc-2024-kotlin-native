@@ -32,9 +32,3 @@ kotlin {
         }
     }
 }
-
-tasks.register<Copy>("copyTask") {
-    from("src/commonMain/resources")
-    into({ destinationDir })
-}
-
