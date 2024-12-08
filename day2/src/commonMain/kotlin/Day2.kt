@@ -4,23 +4,39 @@ import kotlinx.cinterop.*
 import platform.posix.*
 
 fun main() {
-    println(part1())
-    println(part2())
+    read()
 }
 
-fun part1(): Any {
+fun read(): Any {
     return input
 }
 
-fun part2(): Any {
-    return input.reversed()
+private val input: String by lazy { readInput() }
+
+fun removeOneElement(report: List<Int>, ind: Int): List<Int> {
+    return report.subList(0, ind) + report.subList(ind + 1, report.size)
 }
 
-private val input: String by lazy { readInput()}
+fun isGood(report: List<Int>): Boolean {
+    for (i in 0..report.size - 2) {
+        if (report[i] - report[i+1] !in 1..3) {
+            return false
+        }
+    }
+    return true
+}
+
+fun isGoodWithCorrection(report: List<Int>): Boolean {
+    for (i in 0..report.size - 2) {
+        if (report[i] - report[i+1] !in 1..3) {
+            return isGood(removeOneElement(report, i)) || isGood(removeOneElement(report, i+1))
+        }
+    }
+    return true
+}
 
 @OptIn(ExperimentalForeignApi::class)
 private fun readInput(): String {
-    val returnBuffer = StringBuilder()
     val cwd = getcwd(null, 0U)?.toKString()
     val resourceDir = "${cwd}/src/commonMain/resources"
     val file = fopen("$resourceDir/Day2.input", "r") ?:
@@ -31,14 +47,26 @@ private fun readInput(): String {
             val readBufferLength = 64 * 1024
             val buffer = allocArray<ByteVar>(readBufferLength)
             var line = fgets(buffer, readBufferLength, file)?.toKString()
+            var report: List<Int>
+            var delimiter = " "
+            var safeReportCounter = 0
+
             while (line != null) {
-                returnBuffer.append(line)
+                report = line?.trim()?.split(delimiter)?.map { it.toInt() }!!
+//                println(report)
+
+                if (isGoodWithCorrection(report) || isGoodWithCorrection(report.reversed())) {
+                    safeReportCounter++
+                }
+
                 line = fgets(buffer, readBufferLength, file)?.toKString()
             }
+
+            println(safeReportCounter)
         }
     } finally {
         fclose(file)
     }
 
-    return returnBuffer.toString()
+    return ""
 }
