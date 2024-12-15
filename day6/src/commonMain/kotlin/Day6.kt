@@ -96,8 +96,10 @@ fun testLoop(puzzle: List<CharArray>, startX: Int, startY: Int): Boolean {
         } else {
             prevX = x
             prevY = y
-            if (testCell(puzzle, x, y)) {
+            if (puzzle[x][y] == dir.toChar()) {
                 return false
+            } else {
+                puzzle[x][y] = dir.toChar()
             }
             steps++
         }
