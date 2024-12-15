@@ -13,27 +13,26 @@ fun read(): Any {
 
 private val input: String by lazy { readInput() }
 
-fun concatenate(val1: Long, val2: Long): Long {
-    var xScale = 1
-    while (xScale <= val2) {
-        xScale *= 10
+fun testEquation(expected: Long, values: List<Long>, index: Int): Boolean {
+    if (index == 0) {
+        return expected == values[index]
     }
-    return val1 * xScale + val2
-}
-
-fun testEquation(expected: Long, values: List<Long>, current: Long, index: Int): Boolean {
-    if (current > expected) {
+    if (expected <= 0) {
         return false
     }
-    if (index == values.size - 1) {
-        return (expected == current+values[index]) ||
-                (expected == current*values[index]) ||
-                (expected == concatenate(current, values[index]))
+    if (expected % values[index] == 0L) {
+        if (testEquation(expected / values[index], values, index - 1)) {
+            return true
+        }
     }
-
-    return testEquation(expected, values, current*values[index], index+1) ||
-            testEquation(expected, values, current+values[index], index+1) ||
-            testEquation(expected, values, concatenate(current, values[index]), index+1)
+    if (expected.toString().endsWith(values[index].toString())) {
+        val suffix = values[index].toString().length
+        val powerOf10 = pow(10.0, suffix.toDouble()).toLong()
+        if (testEquation(expected / powerOf10, values, index - 1)) {
+            return true
+        }
+    }
+    return testEquation(expected - values[index], values, index - 1)
 }
 
 @OptIn(ExperimentalForeignApi::class)
@@ -67,7 +66,7 @@ private fun readInput(): String {
             expected = splitResult[0].toLong()
             values = splitResult[1].trim().split(" ").map { it.toLong() }.toList()
 
-            if (testEquation(expected, values, values[0], 1)) {
+            if (testEquation(expected, values, values.size - 1)) {
                 acc += expected
             }
         }
