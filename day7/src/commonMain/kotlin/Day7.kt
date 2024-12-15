@@ -22,16 +22,17 @@ fun concatenate(val1: Long, val2: Long): Long {
 }
 
 fun testEquation(expected: Long, values: List<Long>, current: Long, index: Int): Boolean {
-    if (index == 0) {
-        return testEquation(expected, values, values[0], 1)
+    if (current > expected) {
+        return false
     }
     if (index == values.size - 1) {
         return (expected == current+values[index]) ||
                 (expected == current*values[index]) ||
                 (expected == concatenate(current, values[index]))
     }
-    return testEquation(expected, values, current+values[index], index+1) ||
-            testEquation(expected, values, current*values[index], index+1) ||
+
+    return testEquation(expected, values, current*values[index], index+1) ||
+            testEquation(expected, values, current+values[index], index+1) ||
             testEquation(expected, values, concatenate(current, values[index]), index+1)
 }
 
@@ -66,7 +67,7 @@ private fun readInput(): String {
             expected = splitResult[0].toLong()
             values = splitResult[1].trim().split(" ").map { it.toLong() }.toList()
 
-            if (testEquation(expected, values, 0, 0)) {
+            if (testEquation(expected, values, values[0], 1)) {
                 acc += expected
             }
         }
