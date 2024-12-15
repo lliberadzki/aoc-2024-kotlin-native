@@ -55,6 +55,64 @@ fun findRoute(puzzle: List<CharArray>, startX: Int, startY: Int): Boolean {
     return steps != maxSteps
 }
 
+fun testCell(puzzle: List<CharArray>, x: Int, y: Int): Boolean {
+    if (puzzle[x][y] == '.') {
+        puzzle[x][y] = '1'
+        return false
+    } else if (puzzle[x][y] == '1') {
+        puzzle[x][y] = '2'
+        return false
+    } else if (puzzle[x][y] == '2') {
+        puzzle[x][y] = '3'
+        return false
+    } else if (puzzle[x][y] == '3') {
+        puzzle[x][y] = '4'
+        return false
+    } else if (puzzle[x][y] == '4') {
+        puzzle[x][y] = '5'
+        return true
+    }
+    return false
+}
+
+fun testLoop(puzzle: List<CharArray>, startX: Int, startY: Int): Boolean {
+    val max = puzzle.size
+    val maxSteps = max * max
+
+    var x = startX
+    var y = startY
+    var prevX = startX
+    var prevY = startY
+    var dir = 0
+    var steps = 0
+
+    puzzle[x][y] = '1'
+    while (x >= 0 && y >= 0 && x < max && y < max && steps < maxSteps) {
+        if (puzzle[x][y] == '#') {
+            dir++
+            dir %= 4
+            x = prevX
+            y = prevY
+        } else {
+            prevX = x
+            prevY = y
+            if (testCell(puzzle, x, y)) {
+                return false
+            }
+            steps++
+        }
+
+        when (dir) {
+            0 -> x--
+            1 -> y++
+            2 -> x++
+            3 -> y--
+        }
+    }
+
+    return steps != maxSteps
+}
+
 @OptIn(ExperimentalForeignApi::class)
 private fun readInput(): String {
     val cwd = getcwd(null, 0U)?.toKString()
@@ -97,7 +155,7 @@ private fun readInput(): String {
                 if (originalRoutePuzzle[i][j] == 'X' && !(i == x && j == y)) {
                     val newPuzzle = puzzle.map { it.copyOf() }
                     newPuzzle[i][j] = '#'
-                    if (!findRoute(newPuzzle, x, y)) {
+                    if (!testLoop(newPuzzle, x, y)) {
                         acc++
                     }
                 }
