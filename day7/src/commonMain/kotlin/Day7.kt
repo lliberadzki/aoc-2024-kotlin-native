@@ -13,7 +13,7 @@ fun read(): Any {
 
 private val input: String by lazy { readInput() }
 
-fun testEquation(expected: Long, values: List<Long>, index: Int): Boolean {
+fun testEquation(expected: Long, values: List<Long>, index: Int, checkConcat: Boolean): Boolean {
     if (index == 0) {
         return expected == values[index]
     }
@@ -21,18 +21,18 @@ fun testEquation(expected: Long, values: List<Long>, index: Int): Boolean {
         return false
     }
     if (expected % values[index] == 0L) {
-        if (testEquation(expected / values[index], values, index - 1)) {
+        if (testEquation(expected / values[index], values, index - 1, checkConcat)) {
             return true
         }
     }
-    if (expected.toString().endsWith(values[index].toString())) {
+    if (checkConcat && expected.toString().endsWith(values[index].toString())) {
         val suffix = values[index].toString().length
         val powerOf10 = pow(10.0, suffix.toDouble()).toLong()
-        if (testEquation(expected / powerOf10, values, index - 1)) {
+        if (testEquation(expected / powerOf10, values, index - 1, checkConcat)) {
             return true
         }
     }
-    return testEquation(expected - values[index], values, index - 1)
+    return testEquation(expected - values[index], values, index - 1, checkConcat)
 }
 
 @OptIn(ExperimentalForeignApi::class)
@@ -59,19 +59,24 @@ private fun readInput(): String {
         var expected: Long
         var values: List<Long>
         var splitResult: List<String>
-        var acc: Long = 0
+        var acc1: Long = 0
+        var acc2: Long = 0
 
         for (calibration in calibrations) {
             splitResult = calibration.split(":", limit = 2)
             expected = splitResult[0].toLong()
             values = splitResult[1].trim().split(" ").map { it.toLong() }.toList()
 
-            if (testEquation(expected, values, values.size - 1)) {
-                acc += expected
+            if (testEquation(expected, values, values.size - 1, false)) {
+                acc1 += expected
+            }
+            if (testEquation(expected, values, values.size - 1, true)) {
+                acc2 += expected
             }
         }
 
-        println(acc)
+        println(acc1)
+        println(acc2)
     } finally {
         fclose(file)
     }

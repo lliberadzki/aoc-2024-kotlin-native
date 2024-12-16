@@ -44,7 +44,8 @@ private fun readInput(): String {
             var dontList: List<Int>
 
             var allMatches: List<MatchContainer>
-            var acc = 0
+            var acc1 = 0
+            var acc2 = 0
             var mulEnabled = true
 
             var line = fgets(buffer, readBufferLength, file)?.toKString()
@@ -61,15 +62,19 @@ private fun readInput(): String {
                         mulEnabled = true
                     } else if (match.type == MatchType.DONT) {
                         mulEnabled = false
-                    } else if (match.type == MatchType.MUL && mulEnabled) {
-                        acc += match.val1 * match.val2
+                    } else if (match.type == MatchType.MUL) {
+                        acc1 += match.val1 * match.val2
+                        if (mulEnabled) {
+                            acc2 += match.val1 * match.val2
+                        }
                     }
                 }
 
                 line = fgets(buffer, readBufferLength, file)?.toKString()
             }
 
-            println(acc)
+            println(acc1)
+            println(acc2)
         }
     } finally {
         fclose(file)

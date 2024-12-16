@@ -53,7 +53,8 @@ private fun readInput(): String {
     var readingReports = true
     var pages: List<Int>
     var sortedPages: List<Int>
-    var acc = 0
+    var acc1 = 0
+    var acc2 = 0
     var beforeVal: Int
     var afterVal: Int
     var rulesComparator = RulesComparator(HashMap(), HashMap())
@@ -86,14 +87,17 @@ private fun readInput(): String {
                         //println(pages)
                         sortedPages = pages.sortedWith(rulesComparator)
                         //println(sortedPages)
-                        acc += sortedPages[sortedPages.size / 2]
+                        acc2 += sortedPages[sortedPages.size / 2]
+                    } else {
+                        acc1 += pages[pages.size / 2]
                     }
                 }
 
                 line = fgets(buffer, readBufferLength, file)?.toKString()
             }
 
-            println(acc)
+            println(acc1)
+            println(acc2)
         }
     } finally {
         fclose(file)

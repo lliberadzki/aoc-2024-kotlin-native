@@ -13,51 +13,6 @@ fun read(): Any {
 
 private val input: String by lazy { readInput()}
 
-fun countOccurrences(str: String, searchStr: String): Int {
-    var count = 0
-    var startIndex = 0
-
-    while (startIndex < str.length) {
-        val index = str.indexOf(searchStr, startIndex)
-        if (index >= 0) {
-            count++
-            startIndex = index + searchStr.length
-        } else {
-            break
-        }
-    }
-
-    return count
-}
-
-fun transpose(puzzle: List<String>): List<String> {
-    var transposed = ArrayList<String>()
-    for (i in 0..<puzzle[0].length) {
-        transposed.add(puzzle.map { it[i] }.joinToString(""))
-    }
-    return transposed
-}
-
-fun diagonals(puzzle: List<String>): List<String> {
-    var diagonals = ArrayList<String>()
-    var word: String
-    for (base in puzzle.indices) {
-        word = ""
-        for (i in 0..<puzzle.size-base) {
-            word += puzzle[base+i][i]
-        }
-        diagonals.add(word)
-    }
-    for (base in 1..<puzzle.size) {
-        word = ""
-        for (i in 0..<puzzle.size-base) {
-            word += puzzle[i][base+i]
-        }
-        diagonals.add(word)
-    }
-    return diagonals
-}
-
 @OptIn(ExperimentalForeignApi::class)
 private fun readInput(): String {
     val cwd = getcwd(null, 0U)?.toKString()
@@ -66,7 +21,8 @@ private fun readInput(): String {
     throw IllegalArgumentException("Cannot open input file Day4.input")
 
     var puzzle = ArrayList<String>()
-    var acc = 0
+    var acc1 = 0
+    var acc2 = 0
 
     try {
         memScoped {
@@ -81,6 +37,33 @@ private fun readInput(): String {
         }
 
         var size = puzzle.size
+        // part 1
+        for (i in 0..<size) {
+            for (j in 0..<size) {
+                if (puzzle[j][i] != 'X') {
+                    continue
+                }
+
+                if (j > 2) {
+                    if (puzzle[j - 1][i] == 'M' && puzzle[j - 2][i] == 'A' && puzzle[j - 3][i] == 'S') acc1++
+                    if (i > 2 && puzzle[j - 1][i - 1] == 'M' && puzzle[j - 2][i - 2] == 'A' && puzzle[j - 3][i - 3] == 'S') acc1++
+                    if (i < size - 3 && puzzle[j - 1][i + 1] == 'M' && puzzle[j - 2][i + 2] == 'A' && puzzle[j - 3][i + 3] == 'S') acc1++
+                }
+                if (i > 2 && puzzle[j][i - 1] == 'M' && puzzle[j][i - 2] == 'A' && puzzle[j][i - 3] == 'S') {
+                    acc1++
+                }
+                if (i < size - 3 && puzzle[j][i + 1] == 'M' && puzzle[j][i + 2] == 'A' && puzzle[j][i + 3] == 'S') {
+                    acc1++
+                }
+                if (j < size - 3) {
+                    if (puzzle[j + 1][i] == 'M' && puzzle[j + 2][i] == 'A' && puzzle[j + 3][i] == 'S') acc1++
+                    if (i > 2 && puzzle[j + 1][i - 1] == 'M' && puzzle[j + 2][i - 2] == 'A' && puzzle[j + 3][i - 3] == 'S') acc1++
+                    if (i < size - 3 && puzzle[j + 1][i + 1] == 'M' && puzzle[j + 2][i + 2] == 'A' && puzzle[j + 3][i + 3] == 'S') acc1++
+                }
+            }
+        }
+
+        // part 2
         for (i in 1..<size-1) {
             for (j in 1..<size-1) {
                 if (puzzle[j][i] != 'A') {
@@ -91,7 +74,7 @@ private fun readInput(): String {
                     (puzzle[j+1][i+1] == 'M' && puzzle[j-1][i-1] == 'S')) {
                     if ((puzzle[j-1][i+1] == 'M' && puzzle[j+1][i-1] == 'S') ||
                         (puzzle[j+1][i-1] == 'M' && puzzle[j-1][i+1] == 'S')) {
-                        acc++
+                        acc2++
                     } else {
                         continue
                     }
@@ -99,7 +82,7 @@ private fun readInput(): String {
                     (puzzle[j+1][i-1] == 'M' && puzzle[j-1][i+1] == 'S')) {
                     if ((puzzle[j-1][i-1] == 'M' && puzzle[j+1][i+1] == 'S') ||
                         (puzzle[j+1][i+1] == 'M' && puzzle[j-1][i-1] == 'S')) {
-                        acc++
+                        acc2++
                     } else {
                         continue
                     }
@@ -107,7 +90,8 @@ private fun readInput(): String {
             }
         }
 
-        println(acc)
+        println(acc1)
+        println(acc2)
     } finally {
         fclose(file)
     }

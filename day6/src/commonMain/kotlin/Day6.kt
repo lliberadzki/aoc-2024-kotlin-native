@@ -55,26 +55,6 @@ fun findRoute(puzzle: List<CharArray>, startX: Int, startY: Int): Boolean {
     return steps != maxSteps
 }
 
-fun testCell(puzzle: List<CharArray>, x: Int, y: Int): Boolean {
-    if (puzzle[x][y] == '.') {
-        puzzle[x][y] = '1'
-        return false
-    } else if (puzzle[x][y] == '1') {
-        puzzle[x][y] = '2'
-        return false
-    } else if (puzzle[x][y] == '2') {
-        puzzle[x][y] = '3'
-        return false
-    } else if (puzzle[x][y] == '3') {
-        puzzle[x][y] = '4'
-        return false
-    } else if (puzzle[x][y] == '4') {
-        puzzle[x][y] = '5'
-        return true
-    }
-    return false
-}
-
 fun testLoop(puzzle: List<CharArray>, startX: Int, startY: Int): Boolean {
     val max = puzzle.size
     val maxSteps = max * max
@@ -150,20 +130,23 @@ private fun readInput(): String {
         val originalRoutePuzzle = puzzle.map { it.copyOf() }
         findRoute(originalRoutePuzzle, x, y)
 
-        var acc = 0
+        var acc1 = 1
+        var acc2 = 0
         val size = originalRoutePuzzle.size
         for (i in 0..<size) {
             for (j in 0..<size) {
                 if (originalRoutePuzzle[i][j] == 'X' && !(i == x && j == y)) {
+                    acc1++
                     val newPuzzle = puzzle.map { it.copyOf() }
                     newPuzzle[i][j] = '#'
                     if (!testLoop(newPuzzle, x, y)) {
-                        acc++
+                        acc2++
                     }
                 }
             }
         }
-        println(acc)
+        println(acc1)
+        println(acc2)
 
     } finally {
         fclose(file)

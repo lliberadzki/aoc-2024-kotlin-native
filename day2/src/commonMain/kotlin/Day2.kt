@@ -50,19 +50,24 @@ private fun readInput(): String {
             var report: List<Int>
             var delimiter = " "
             var safeReportCounter = 0
+            var safeCorrectedReportCounter = 0
 
             while (line != null) {
                 report = line?.trim()?.split(delimiter)?.map { it.toInt() }!!
 //                println(report)
 
-                if (isGoodWithCorrection(report) || isGoodWithCorrection(report.reversed())) {
+                if (isGood(report) || isGood(report.reversed())) {
                     safeReportCounter++
+                }
+                if (isGoodWithCorrection(report) || isGoodWithCorrection(report.reversed())) {
+                    safeCorrectedReportCounter++
                 }
 
                 line = fgets(buffer, readBufferLength, file)?.toKString()
             }
 
             println(safeReportCounter)
+            println(safeCorrectedReportCounter)
         }
     } finally {
         fclose(file)
